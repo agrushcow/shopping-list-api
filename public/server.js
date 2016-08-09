@@ -22,6 +22,7 @@ storage.add('Olives');
 
 var app = express();
 app.use(express.static('public'));
+app.use(jsonParser);
 
 app.get('/items', function(req, res) {
     res.json(storage.items);
