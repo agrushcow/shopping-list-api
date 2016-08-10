@@ -23,6 +23,12 @@ storage.add('Pizza');
 var app = express();
 app.use(express.static('public'));
 
+app.get('/', function(req, res) {
+    if(!req.body) {
+        return res.sendStatus(400);
+    }
+})
+
 app.get('/items', function(req, res) {
     res.json(storage.items);
 });
