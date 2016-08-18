@@ -1,3 +1,4 @@
+var PORT = process.env.PORT || 8000;
 var express = require('express');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
@@ -18,10 +19,11 @@ var storage = new Storage();
 storage.add('Broad beans');
 storage.add('Tomatoes');
 storage.add('Peppers');
-storage.add('Pizza');
+storage.add('Olives');
 
 var app = express();
 app.use(express.static('public'));
+
 
 app.get('/', function(req, res) {
     if(!req.body) {
@@ -42,13 +44,31 @@ app.post('/items', jsonParser, function(req, res) {
     res.status(201).json(item);
 });
 
-app.delete('/items/<id>', function(req, res) {
+app.put('/items/:id', jsonParser, function(req, res) {
+    if(!req.body) {
+        return res.sendStatus(400);
+    }
+   
+    storage.items[req.params.id].name=req.body.name;
+    res.status(200).json(storage.items[req.params.id]);
+});
+
+app.delete('/items/:id', jsonParser, function(req, res) {
 	if(!req.body) {
 		return res.sendStatus(400);
 	}
-
-	var item = storage.add(req.body.name);
-	res.status(201).json(item);
+	var item = storage.items.splice(req.params.id, 1);
+	res.status(200).json(item);
 });
 
-app.listen(process.env.PORT || 8080);
+exports.app = app;
+exports.storage = storage;
+
+if ( require.main === module ) {
+    app.listen(PORT, function(){
+        console.log("Server running on port:" + PORT);
+    });
+}
+
+
+
