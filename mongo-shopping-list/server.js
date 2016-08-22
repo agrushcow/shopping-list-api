@@ -36,27 +36,31 @@ app.post('/items',  function(req, res) {
 });
 
 app.put('/items/:id', function(req, res) {
-    if(!req.body.hasOwnProperty(('id') && !req.body.hasOwnProperty('name')) {
-        return.res(500).json({
+    if(!req.body.hasOwnProperty('id') && !req.body.hasOwnProperty('name')) {
+        return res(500).json({
            message: 'Internal Server Error' 
         });
     }
     
-    Item.update({_id: req.body.id}, {name: req.body.name}, function(err, item) {
+    console.log(req.body.id);
+    
+    Item.findByIdAndUpdate(req.body.id, {name: req.body.name}, {new:true}, function(err, item) {
         if (err) {
-            return res.status(500).json(
+            console.log(err);
+            return res.status(500).json({
                 message:"Internal Server Error"
-            )};
+            });
         }
         res.status(200).json(item);
     });
 });
 
-app.delete('/items/:id', jsonParser function(req, res) {
+app.delete('/items/:id', function(req, res) {
     if(!req.params.id) {
         return res.status(500).json({
             message: "Internal Server Error"
         });
+    };
     Item.findOneAndRemove({_id: req.params.id }, function(err) {
         if(err) {
             return res.status(500).json({
